@@ -1,5 +1,22 @@
 # POMDP model functions
 """
+Abstract base type for a robust partially observable Markov decision process.
+
+    S: state type
+    A: action type
+    O: observation type
+"""
+abstract type RPOMDP{S,A,O} end
+
+"""
+Abstract base type for a robust fully observable Markov decision process.
+
+    S: state type
+    A: action type
+"""
+abstract type RMDP{S,A,O} end
+
+"""
 Abstract base type for a partially observable Markov decision process.
 
     S: state type
@@ -17,6 +34,8 @@ Abstract base type for a fully observable Markov decision process.
 abstract type MDP{S,A} end
 
 """
+    n_states(problem::RPOMDP)
+    n_states(problem::RMDP)
     n_states(problem::POMDP)
     n_states(problem::MDP)
 
@@ -25,6 +44,8 @@ Return the number of states in `problem`. Used for discrete models only.
 function n_states end
 
 """
+    n_states(problem::RPOMDP)
+    n_states(problem::RMDP)
     n_actions(problem::POMDP)
     n_actions(problem::MDP)
 
@@ -33,6 +54,7 @@ Return the number of actions in `problem`. Used for discrete models only.
 function n_actions end
 
 """
+    n_observations(problem::RPOMDP)
     n_observations(problem::POMDP)
 
 Return the number of observations in `problem`. Used for discrete models only.
@@ -40,6 +62,8 @@ Return the number of observations in `problem`. Used for discrete models only.
 function n_observations end
 
 """
+    discount(problem::RPOMDP)
+    discount(problem::RMDP)
     discount(problem::POMDP)
     discount(problem::MDP)
 
@@ -48,19 +72,24 @@ Return the discount factor for the problem.
 function discount end
 
 """
+    transition{S,A,O}(problem::RPOMDP{S,A,O}, state::S, action::A)
+    transition{S,A}(problem::RMDP{S,A}, state::S, action::A)
     transition{S,A,O}(problem::POMDP{S,A,O}, state::S, action::A)
     transition{S,A}(problem::MDP{S,A}, state::S, action::A)
 
-Return the transition distribution from the current state-action pair
+Return the transition distribution for the state-action pair. If the problem is robust, return the set of transition distributions.
 """
 function transition end
 
 """
+    observation{S,A,O}(problem::RPOMDP{S,A,O}, statep::S)
+    observation{S,A,O}(problem::RPOMDP{S,A,O}, action::A, statep::S)
+    observation{S,A,O}(problem::RPOMDP{S,A,O}, state::S, action::A, statep::S)
     observation{S,A,O}(problem::POMDP{S,A,O}, statep::S)
     observation{S,A,O}(problem::POMDP{S,A,O}, action::A, statep::S)
     observation{S,A,O}(problem::POMDP{S,A,O}, state::S, action::A, statep::S)
 
-Return the observation distribution. You need only define the method with the fewest arguments needed to determine the observation distribution.
+Return the observation distribution for s, s-a, or s-a-s'. If the problem is robust, return the set of transition distributions. You need only define the method with the fewest arguments needed to determine the observation distribution.
 
 # Example
 ```julia
@@ -90,46 +119,57 @@ observation(problem::POMDP, s, a, sp) = observation(problem, a, sp)
 @impl_dep {P<:POMDP,S,A} observation(::P,::S,::A,::S) observation(::P,::A,::S)
 
 """
+    reward{S,A,O}(problem::RPOMDP{S,A,O}, state::S, action::A)
+    reward{S,A}(problem::RMDP{S,A}, state::S, action::A)
     reward{S,A,O}(problem::POMDP{S,A,O}, state::S, action::A)
     reward{S,A}(problem::MDP{S,A}, state::S, action::A)
 
-Return the immediate reward for the s-a pair
+Return the immediate reward for the s-a pair.
 """
 function reward end
 
 """
+    reward{S,A,O}(problem::RPOMDP{S,A,O}, state::S, action::A, statep::S)
+    reward{S,A}(problem::RMDP{S,A}, state::S, action::A, statep::S)
     reward{S,A,O}(problem::POMDP{S,A,O}, state::S, action::A, statep::S)
     reward{S,A}(problem::MDP{S,A}, state::S, action::A, statep::S)
 
-Return the immediate reward for the s-a-s' triple
+Return the immediate reward for the s-a-s' tuple.
 """
 reward(problem::Union{POMDP,MDP}, s, a, sp) = reward(problem, s, a)
 @impl_dep {P<:Union{POMDP,MDP},S,A} reward(::P,::S,::A,::S) reward(::P,::S,::A)
 
 """
+    isterminal_obs{S,A,O}(problem::RPOMDP{S,A,O}, observation::O)
     isterminal_obs{S,A,O}(problem::POMDP{S,A,O}, observation::O)
 
-Check if an observation is terminal.
+Check if observation `o` is terminal.
 """
-isterminal_obs(problem::POMDP, observation) = false
+isterminal_obs(problem::Union{RPOMDP,POMDP}, observation) = false
 
 """
+    isterminal{S,A,O}(problem::RPOMDP{S,A,O}, state::S)
+    isterminal{S,A}(problem::RMDP{S,A}, state::S)
     isterminal{S,A,O}(problem::POMDP{S,A,O}, state::S)
     isterminal{S,A}(problem::MDP{S,A}, state::S)
 
-Check if state s is terminal
+Check if state `s` is terminal.
 """
-isterminal(problem::Union{POMDP,MDP}, state) = false
+isterminal(problem::Union{RPOMDP,RMDP,POMDP,MDP}, state) = false
 
 """
-    initial_state_distribution(pomdp::POMDP)
-    initial_state_distribution(mdp::MDP)
+    initial_state_distribution(problem::RPOMDP)
+    initial_state_distribution(problem::RMDP)
+    initial_state_distribution(problem::POMDP)
+    initial_state_distribution(problem::MDP)
 
-Return a distribution of the initial state of the pomdp or mdp.
+Return a distribution of the initial state of the problem.
 """
 function initial_state_distribution end
 
 """
+    state_index{S,A,O}(problem::RPOMDP{S,A,O}, s::S)
+    state_index{S,A}(problem::RMDP{S,A}, s::S)
     state_index{S,A,O}(problem::POMDP{S,A,O}, s::S)
     state_index{S,A}(problem::MDP{S,A}, s::S)
 
@@ -138,6 +178,8 @@ Return the integer index of state `s`. Used for discrete models only.
 function state_index end
 
 """
+    action_index{S,A,O}(problem::RPOMDP{S,A,O}, a::A)
+    action_index{S,A}(problem::RMDP{S,A}, a::A)
     action_index{S,A,O}(problem::POMDP{S,A,O}, a::A)
     action_index{S,A}(problem::MDP{S,A}, a::A)
 
@@ -146,6 +188,7 @@ Return the integer index of action `a`. Used for discrete models only.
 function action_index end
 
 """
+    obs_index{S,A,O}(problem::RPOMDP{S,A,O}, o::O)
     obs_index{S,A,O}(problem::POMDP{S,A,O}, o::O)
 
 Return the integer index of observation `o`. Used for discrete models only.
