@@ -14,7 +14,7 @@ Abstract base type for a robust fully observable Markov decision process.
     S: state type
     A: action type
 """
-abstract type RMDP{S,A,O} end
+abstract type RMDP{S,A} end
 
 """
 Abstract base type for a partially observable Markov decision process.

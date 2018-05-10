@@ -8,8 +8,10 @@ module POMDPs
 import Base: rand, mean
 import Distributions: pdf, mode
 
-export 
+export
     # Abstract type
+    RPOMDP,
+    RMDP,
     POMDP,
     MDP,
 
@@ -17,7 +19,7 @@ export
     n_states,
     n_actions,
     n_observations,
-    
+
     # Model functions
     discount,
     states,
@@ -37,14 +39,14 @@ export
     generate_or,
     generate_sor,
     initial_state,
-    
+
     # Discrete Functions
     length,
     state_index,
     action_index,
     obs_index,
     weight,
-    
+
     # Common Functions
     rand,
     pdf,
@@ -61,7 +63,7 @@ export
     # Solver types
     Solver,
     solve,
-    
+
     # Beliefs
     Updater,
     update,
