@@ -3,7 +3,7 @@ __precompile__()
 """
 Provides a basic interface for defining and solving MDPs/POMDPs
 """
-module POMDPs
+module RPOMDPs
 
 import Base: rand, mean
 import Distributions: pdf, mode
