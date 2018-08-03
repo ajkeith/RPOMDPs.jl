@@ -12,19 +12,19 @@ function dimensions end
 """
     states(problem::POMDP)
     states(problem::MDP)
-    
-Returns the complete state space of a POMDP. 
+
+Returns the complete state space of a POMDP.
 """
 function states end
 
 """
     states{S,A,O}(problem::POMDP{S,A,O}, state::S)
     states{S,A}(problem::MDP{S,A}, state::S)
-    
-Returns a subset of the state space reachable from `state`. 
+
+Returns a subset of the state space reachable from `state`.
 """
-states(problem::Union{POMDP,MDP}, s) = states(problem)
-@impl_dep {P<:Union{POMDP,MDP},S} states(::P,::S) states(::P)
+states(problem::Union{RPOMDP,POMDP,MDP}, s) = states(problem)
+@impl_dep {P<:Union{RPOMDP,POMDP,MDP},S} states(::P,::S) states(::P)
 
 """
     actions(problem::POMDP)
