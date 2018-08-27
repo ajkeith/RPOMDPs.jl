@@ -40,15 +40,15 @@ function actions end
 
 Return the action space accessible from the given state.
 """
-actions(problem::Union{MDP,POMDP}, state) = actions(problem)
-@impl_dep {P<:Union{POMDP,MDP},S} actions(::P,::S) actions(::P)
+actions(problem::Union{MDP,POMDP,RPOMDP}, state) = actions(problem)
+@impl_dep {P<:Union{RPOMDP,POMDP,MDP},S} actions(::P,::S) actions(::P)
 
 """
     actions(problem::POMDP, belief)
 
 Return the action space accessible from the states with nonzero belief.
 """
-actions(problem::POMDP, belief) = actions(problem)
+actions(problem::Union{RPOMDP,POMDP}, belief) = actions(problem)
 
 """
     observations(problem::POMDP)
@@ -62,5 +62,5 @@ function observations end
 
 Return the observation space accessible from the given state and returns it.
 """
-observations(problem::POMDP, state) = observations(problem)
-@impl_dep {P<:POMDP,S} observations(::P,::S) observations(::P)
+observations(problem::Union{RPOMDP,POMDP}, state) = observations(problem)
+@impl_dep {P<:Union{RPOMDP,POMDP},S} observations(::P,::S) observations(::P)
