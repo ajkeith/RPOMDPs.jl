@@ -9,6 +9,15 @@ Abstract base type for a robust partially observable Markov decision process.
 abstract type RPOMDP{S,A,O} end
 
 """
+Abstract base type for a robust information-reward partially observable Markov decision process.
+
+    S: state type
+    A: action type
+    O: observation type
+"""
+abstract type RrhoPOMDP{S,A,O} <: RPOMDP{S,A,O} end
+
+"""
 Abstract base type for a robust fully observable Markov decision process.
 
     S: state type

@@ -11,6 +11,7 @@ import Distributions: pdf, mode
 export
     # Abstract type
     RPOMDP,
+    RrhoPOMDP,
     RMDP,
     POMDP,
     MDP,
