@@ -309,7 +309,7 @@ Declare an implementation dependency and automatically implement `implemented`.
 
 In the example above, `@implemented reward(::P,::S,::A,::S)` will return true if the user has implemented `reward(::P,::S,::A,::S)` OR `reward(::P,::S,::A)`
 
-THIS IS ONLY INTENDED FOR USE INSIDE POMDPs AND MAY NOT FUNCTION CORRECTLY ELSEWHERE
+THIS IS ONLY INTENDED FOR USE INSIDE RPOMDPs AND MAY NOT FUNCTION CORRECTLY ELSEWHERE
 """
 macro impl_dep(curly, signature, dependency)
     # this is kinda hacky and fragile with the cell1d - email Zach if it breaks
@@ -320,7 +320,7 @@ macro impl_dep(curly, signature, dependency)
     impled = quote
         function $implemented_curly(f::typeof(first($tplex)), TT::Type{last($tplex)})
             m = which(f,TT)
-            if m.module == POMDPs && !implemented($deptplex...)
+            if m.module == RPOMDPs && !implemented($deptplex...)
                 return false
             else # a more specific implementation exists
                 return true

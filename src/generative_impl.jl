@@ -7,7 +7,7 @@ function implemented(f::typeof(generate_s), TT::Type)
         return false
     end
     m = which(f, TT)
-    if m.module == POMDPs && !implemented(transition, Tuple{TT.parameters[1:end-1]...})
+    if m.module == RPOMDPs && !implemented(transition, Tuple{TT.parameters[1:end-1]...})
         return false
     else # a more specific implementation exists
         return true
@@ -42,7 +42,7 @@ function implemented(f::typeof(generate_sr), TT::Type)
     end
     m = which(f, TT)
     reqs_met = implemented(generate_s, TT) && implemented(reward, Tuple{TT.parameters[1:end-1]..., TT.parameters[2]})
-    if m.module == POMDPs && !reqs_met
+    if m.module == RPOMDPs && !reqs_met
         return false
     else # a more specific implementation exists
         return true
@@ -78,7 +78,7 @@ function implemented(f::typeof(generate_o), TT::Type)
         return false
     end
     m = which(f, TT)
-    if m.module == POMDPs && !implemented(observation, Tuple{TT.parameters[1:end-1]...})
+    if m.module == RPOMDPs && !implemented(observation, Tuple{TT.parameters[1:end-1]...})
         return false
     else # a more specific implementation exists
         return true
@@ -113,7 +113,7 @@ function implemented(f::typeof(generate_so), TT::Type)
     end
     m = which(f, TT)
     reqs_met = implemented(generate_s, TT) && implemented(generate_o, Tuple{TT.parameters[1:end-1]..., TT.parameters[2], TT.parameters[end]})
-    if m.module == POMDPs && !reqs_met
+    if m.module == RPOMDPs && !reqs_met
         return false
     else # a more specific implementation exists
         return true
@@ -152,7 +152,7 @@ function implemented(f::typeof(generate_sor), TT::Type)
     m = which(f, TT)
     so_reqs_met = implemented(generate_so, TT) && implemented(reward, Tuple{TT.parameters[1:end-1]..., TT.parameters[2]})
     sr_reqs_met = implemented(generate_sr, TT) && implemented(generate_o, Tuple{TT.parameters[1:end-1]..., TT.parameters[2], TT.parameters[end]})
-    if m.module == POMDPs && !so_reqs_met && !sr_reqs_met
+    if m.module == RPOMDPs && !so_reqs_met && !sr_reqs_met
         return false
     else # a more specific implementation exists
         return true
@@ -199,7 +199,7 @@ function implemented(f::typeof(generate_or), TT::Type)
     end
     m = which(f, TT)
     reqs_met = implemented(generate_o, TT) && implemented(reward, Tuple{TT.parameters[1:end-1]..., TT.parameters[2]})
-    if m.module == POMDPs && !reqs_met
+    if m.module == RPOMDPs && !reqs_met
         return false
     else # a more specific implementation exists
         return true
@@ -236,7 +236,7 @@ function implemented(f::typeof(initial_state), TT::Type)
         return false
     end
     m = which(f, TT)
-    if m.module == POMDPs && !implemented(initial_state_distribution, Tuple{TT.parameters[1]})
+    if m.module == RPOMDPs && !implemented(initial_state_distribution, Tuple{TT.parameters[1]})
         return false
     else
         return true
@@ -265,11 +265,11 @@ end
     end
 end
 
-function failed_synth_warning(gen::Tuple, reqs::Vector, greqs::Vector=[]) 
+function failed_synth_warning(gen::Tuple, reqs::Vector, greqs::Vector=[])
     io = IOBuffer()
     show_checked_list(io, reqs)
     Core.println("""
-WARNING: POMDPs.jl: Could not find or synthesize $(format_method(gen...)). Either implement it directly, or, to automatically synthesize it, implement the following methods from the explicit interface:
+WARNING: RPOMDPs.jl: Could not find or synthesize $(format_method(gen...)). Either implement it directly, or, to automatically synthesize it, implement the following methods from the explicit interface:
 
 $(String(take!(io)))
     """)
