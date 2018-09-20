@@ -163,7 +163,7 @@ reward(problem::Union{RPOMDP,POMDP,MDP}, s, a, sp) = reward(problem, s, a)
 
 Check if observation `o` is terminal.
 """
-isterminal_obs(problem::Union{RPOMDP,POMDP}, observation) = false
+isterminal_obs(problem::Union{POMDP,IPOMDP,RPOMDP,RIPOMDP}, observation) = false
 
 """
     isterminal{S,A,O}(problem::RPOMDP{S,A,O}, state::S)
@@ -173,7 +173,7 @@ isterminal_obs(problem::Union{RPOMDP,POMDP}, observation) = false
 
 Check if state `s` is terminal.
 """
-isterminal(problem::Union{RPOMDP,RMDP,POMDP,MDP}, state) = false
+isterminal(problem::Union{MDP,POMDP,IPOMDP,RPOMDP,RIPOMDP}, state) = false
 
 """
     initial_state_distribution(problem::RPOMDP)
@@ -212,6 +212,14 @@ function action_index end
 Return the integer index of observation `o`. Used for discrete models only.
 """
 function obs_index end
+
+"""
+    dynamics{S,A,O}(problem::Union{POMDP{S,A,O},IPOMDP{S,A,O}}, o::O)
+    dynamics{S,A,O}(problem::Union{RPOMDP{S,A,O},RIPOMDP{S,A,O}}, o::O)
+
+Return the the joint categorical probability distribution of next states and observations given actions and current states.
+"""
+function dynamics end
 
 """
     convert_s(::Type{V}, s, problem::Union{MDP,POMDP}) where V<:AbstractArray

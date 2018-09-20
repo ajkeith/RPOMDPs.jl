@@ -47,6 +47,7 @@ export
     state_index,
     action_index,
     obs_index,
+    dynamics,
     weight,
 
     # Common Functions
