@@ -144,7 +144,6 @@ end
     end
 end
 
-
 function implemented(f::typeof(generate_sor), TT::Type)
     if !method_exists(f, TT)
         return false
